@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#111113"/>
+  <circle cx="256" cy="256" r="160" fill="none" stroke="#2a2a2f" stroke-width="20"/>
+  <circle cx="256" cy="256" r="160" fill="none" stroke="#f0eeeb" stroke-width="20" stroke-linecap="round" stroke-dasharray="753.98" stroke-dashoffset="188.5" transform="rotate(-90 256 256)"/>
+  <text x="256" y="275" text-anchor="middle" fill="#f0eeeb" font-family="DM Mono, monospace" font-size="120" font-weight="500">I</text>
+</svg>

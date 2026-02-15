@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup 2 – Clean Minimal</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #f0ede8;
+            color: #1a1a1a;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .app {
+            width: 390px;
+            height: 844px;
+            background: #faf8f5;
+            border-radius: 40px;
+            border: 1px solid #e0ddd6;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 60px 28px 20px;
+        }
+
+        .app-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            letter-spacing: -0.5px;
+        }
+
+        .settings-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1.5px solid #d6d3cc;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .settings-btn:hover {
+            border-color: #1a1a1a;
+        }
+
+        .settings-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: #666;
+        }
+
+        /* Status pill */
+        .status-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4px 28px 0;
+            gap: 8px;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 100px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-pill .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #4caf50;
+        }
+
+        .round-info {
+            font-size: 14px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        /* Timer */
+        .timer-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .timer-container {
+            position: relative;
+            width: 270px;
+            height: 270px;
+        }
+
+        svg.timer-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .timer-track {
+            fill: none;
+            stroke: #ece9e3;
+            stroke-width: 6;
+        }
+
+        .timer-progress {
+            fill: none;
+            stroke: #1a1a1a;
+            stroke-width: 6;
+            stroke-linecap: round;
+            stroke-dasharray: 791.68;
+            stroke-dashoffset: 158.34;
+        }
+
+        .timer-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-value {
+            font-family: 'DM Mono', monospace;
+            font-size: 68px;
+            font-weight: 500;
+            letter-spacing: -2px;
+            line-height: 1;
+            color: #1a1a1a;
+        }
+
+        .timer-sub {
+            font-size: 13px;
+            color: #bbb;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        /* Progress steps */
+        .progress-steps {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            padding: 0 40px 20px;
+        }
+
+        .step {
+            flex: 1;
+            height: 4px;
+            border-radius: 2px;
+            background: #ece9e3;
+        }
+
+        .step.done {
+            background: #1a1a1a;
+        }
+
+        .step.active {
+            background: linear-gradient(90deg, #1a1a1a 60%, #ece9e3 60%);
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            padding: 12px 28px;
+        }
+
+        .ctrl-btn {
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .ctrl-btn-secondary {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: #fff;
+            border: 1.5px solid #d6d3cc;
+        }
+
+        .ctrl-btn-secondary svg {
+            width: 22px;
+            height: 22px;
+            stroke: #666;
+            fill: none;
+        }
+
+        .ctrl-btn-secondary:hover {
+            border-color: #1a1a1a;
+        }
+
+        .ctrl-btn-primary {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            border: none;
+        }
+
+        .ctrl-btn-primary svg {
+            width: 28px;
+            height: 28px;
+            fill: #fff;
+            stroke: none;
+        }
+
+        .ctrl-btn-primary:hover {
+            background: #333;
+            transform: scale(1.04);
+        }
+
+        /* Spotify bar */
+        .spotify-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 12px 28px 48px;
+            padding: 14px 16px;
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid #ece9e3;
+        }
+
+        .spotify-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #1DB954;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .spotify-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: #fff;
+        }
+
+        .spotify-info { flex: 1; min-width: 0; }
+
+        .spotify-song {
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #1a1a1a;
+        }
+
+        .spotify-artist {
+            font-size: 11px;
+            color: #999;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .spotify-progress {
+            width: 100%;
+            height: 2px;
+            background: #ece9e3;
+            border-radius: 1px;
+            margin-top: 6px;
+        }
+
+        .spotify-progress-fill {
+            width: 35%;
+            height: 100%;
+            background: #1DB954;
+            border-radius: 1px;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(250,248,245,0.85);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: flex-end;
+            z-index: 10;
+        }
+
+        .modal {
+            width: 100%;
+            background: #fff;
+            border-radius: 28px 28px 0 0;
+            border-top: 1px solid #e0ddd6;
+            padding: 20px 28px 48px;
+            max-height: 85%;
+            overflow-y: auto;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.06);
+        }
+
+        .modal-handle {
+            width: 36px;
+            height: 4px;
+            background: #d6d3cc;
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
+        }
+
+        .setting-group {
+            margin-bottom: 18px;
+        }
+
+        .setting-label {
+            font-size: 13px;
+            color: #999;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .setting-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #faf8f5;
+            border: 1px solid #ece9e3;
+            border-radius: 14px;
+            padding: 10px 14px;
+        }
+
+        .setting-control button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1.5px solid #d6d3cc;
+            background: #fff;
+            color: #1a1a1a;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+        }
+
+        .setting-value {
+            font-family: 'DM Mono', monospace;
+            font-size: 22px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .setting-unit {
+            font-size: 11px;
+            color: #bbb;
+            margin-top: 2px;
+            text-align: center;
+        }
+
+        .modal-save-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            border: none;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .modal-save-btn:hover {
+            background: #333;
+        }
+
+        .spotify-connect-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid #e0ddd6;
+            background: #fff;
+            color: #1a1a1a;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        /* Toggle */
+        .view-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .view-toggle button {
+            padding: 8px 16px;
+            border-radius: 100px;
+            border: 1.5px solid #d6d3cc;
+            background: #fff;
+            color: #1a1a1a;
+            font-size: 12px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .view-toggle button.active {
+            background: #1a1a1a;
+            color: #fff;
+            border-color: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="view-toggle">
+    <button class="active" onclick="showView('main')">Hovedskjerm</button>
+    <button onclick="showView('modal')">Med innstillinger</button>
+</div>
+
+<div class="app">
+
+    <div class="header">
+        <div class="app-title">Intervall</div>
+        <div class="settings-btn" onclick="showView('modal')">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="6" x2="20" y2="6"/>
+                <line x1="4" y1="12" x2="20" y2="12"/>
+                <line x1="4" y1="18" x2="20" y2="18"/>
+                <circle cx="8" cy="6" r="2" fill="#faf8f5"/>
+                <circle cx="16" cy="12" r="2" fill="#faf8f5"/>
+                <circle cx="10" cy="18" r="2" fill="#faf8f5"/>
+            </svg>
+        </div>
+    </div>
+
+    <div class="status-section">
+        <div class="status-pill">
+            <span class="dot"></span>
+            Arbeid
+        </div>
+        <div class="round-info">Runde 3 av 8</div>
+    </div>
+
+    <div class="timer-section">
+        <div class="timer-container">
+            <svg class="timer-svg" viewBox="0 0 270 270">
+                <circle class="timer-track" cx="135" cy="135" r="126"/>
+                <circle class="timer-progress" cx="135" cy="135" r="126"/>
+            </svg>
+            <div class="timer-content">
+                <div class="timer-value">0:24</div>
+                <div class="timer-sub">av 0:30</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="progress-steps">
+        <div class="step done"></div>
+        <div class="step done"></div>
+        <div class="step done"></div>
+        <div class="step done"></div>
+        <div class="step active"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+    </div>
+
+    <div class="controls">
+        <button class="ctrl-btn ctrl-btn-secondary">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="16" height="16" rx="2"/>
+            </svg>
+        </button>
+        <button class="ctrl-btn ctrl-btn-primary">
+            <svg viewBox="0 0 24 24">
+                <rect x="6" y="4" width="4" height="16" rx="1"/>
+                <rect x="14" y="4" width="4" height="16" rx="1"/>
+            </svg>
+        </button>
+        <button class="ctrl-btn ctrl-btn-secondary">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="1 4 1 10 7 10"/>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+            </svg>
+        </button>
+    </div>
+
+    <div class="spotify-bar">
+        <div class="spotify-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        </div>
+        <div class="spotify-info">
+            <div class="spotify-song">Power (feat. Dwele)</div>
+            <div class="spotify-artist">Kanye West</div>
+            <div class="spotify-progress"><div class="spotify-progress-fill"></div></div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <div class="modal-title">Innstillinger</div>
+
+            <div class="setting-group">
+                <div class="setting-label">Oppvarming</div>
+                <div class="setting-control">
+                    <button>−</button>
+                    <div><div class="setting-value">3:00</div><div class="setting-unit">minutter</div></div>
+                    <button>+</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-label">Intervall (arbeid)</div>
+                <div class="setting-control">
+                    <button>−</button>
+                    <div><div class="setting-value">0:30</div><div class="setting-unit">sekunder</div></div>
+                    <button>+</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-label">Pause</div>
+                <div class="setting-control">
+                    <button>−</button>
+                    <div><div class="setting-value">0:15</div><div class="setting-unit">sekunder</div></div>
+                    <button>+</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-label">Antall runder</div>
+                <div class="setting-control">
+                    <button>−</button>
+                    <div><div class="setting-value">8</div><div class="setting-unit">runder</div></div>
+                    <button>+</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-label">Nedkjøling</div>
+                <div class="setting-control">
+                    <button>−</button>
+                    <div><div class="setting-value">3:00</div><div class="setting-unit">minutter</div></div>
+                    <button>+</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-label">Musikk</div>
+                <button class="spotify-connect-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+                    Koble til Spotify
+                </button>
+            </div>
+
+            <button class="modal-save-btn" onclick="showView('main')">Lagre innstillinger</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function showView(view) {
+    const overlay = document.getElementById('modalOverlay');
+    const btns = document.querySelectorAll('.view-toggle button');
+    if (view === 'modal') {
+        overlay.style.display = 'flex';
+        btns[0].classList.remove('active');
+        btns[1].classList.add('active');
+    } else {
+        overlay.style.display = 'none';
+        btns[1].classList.remove('active');
+        btns[0].classList.add('active');
+    }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,786 @@
+/*
+ * INTERVALL – Design System
+ * Style: Clean Minimal Dark
+ * Based on Mockup 2B
+ *
+ * This file defines all design tokens, component styles, and utility classes
+ * for the Intervall PWA. Import this file in all pages/components.
+ */
+
+/* ============================================
+   1. DESIGN TOKENS (CSS Custom Properties)
+   ============================================ */
+
+:root {
+    /* --- Colors --- */
+    --color-bg:             #111113;
+    --color-bg-elevated:    #18181b;
+    --color-surface:        #1a1a1e;
+    --color-surface-hover:  #222226;
+    --color-surface-active: #2a2a2f;
+    --color-border:         #2a2a2f;
+    --color-border-subtle:  #222226;
+
+    --color-text:           #f0eeeb;
+    --color-text-secondary: #a1a1a6;
+    --color-text-dim:       #6e6e73;
+    --color-text-inverse:   #111113;
+
+    /* Accent / Status */
+    --color-accent:         #f0eeeb;
+    --color-accent-hover:   #d4d2cf;
+    --color-accent-active:  #b8b6b3;
+
+    --color-success:        #4caf50;
+    --color-success-bg:     #1a2e1a;
+    --color-success-text:   #6fcf6f;
+
+    --color-warning:        #f59e0b;
+    --color-warning-bg:     #2e2510;
+    --color-warning-text:   #fbbf24;
+
+    --color-danger:         #ef4444;
+    --color-danger-bg:      #2e1a1a;
+    --color-danger-text:    #f87171;
+
+    --color-rest:           #3b82f6;
+    --color-rest-bg:        #1a1e2e;
+    --color-rest-text:      #60a5fa;
+
+    --color-spotify:        #1DB954;
+
+    /* --- Typography --- */
+    --font-sans:            'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono:            'DM Mono', 'SF Mono', 'Fira Code', monospace;
+
+    --text-xs:              11px;
+    --text-sm:              13px;
+    --text-base:            14px;
+    --text-md:              15px;
+    --text-lg:              20px;
+    --text-xl:              22px;
+    --text-2xl:             28px;
+    --text-timer:           68px;
+
+    --weight-regular:       400;
+    --weight-medium:        500;
+    --weight-semibold:      600;
+    --weight-bold:          700;
+
+    --leading-tight:        1;
+    --leading-normal:       1.4;
+    --leading-relaxed:      1.6;
+
+    --tracking-tight:       -0.5px;
+    --tracking-normal:      0;
+    --tracking-wide:        0.5px;
+    --tracking-timer:       -2px;
+
+    /* --- Spacing --- */
+    --space-1:              4px;
+    --space-2:              8px;
+    --space-3:              12px;
+    --space-4:              16px;
+    --space-5:              20px;
+    --space-6:              24px;
+    --space-7:              28px;
+    --space-8:              32px;
+    --space-10:             40px;
+    --space-12:             48px;
+
+    /* --- Radii --- */
+    --radius-sm:            8px;
+    --radius-md:            14px;
+    --radius-lg:            16px;
+    --radius-xl:            24px;
+    --radius-2xl:           28px;
+    --radius-full:          9999px;
+
+    /* --- Shadows --- */
+    --shadow-sm:            0 2px 8px rgba(0, 0, 0, 0.2);
+    --shadow-md:            0 8px 24px rgba(0, 0, 0, 0.3);
+    --shadow-lg:            0 20px 60px rgba(0, 0, 0, 0.5);
+    --shadow-modal:         0 -10px 40px rgba(0, 0, 0, 0.3);
+
+    /* --- Transitions --- */
+    --transition-fast:      0.15s ease;
+    --transition-normal:    0.2s ease;
+    --transition-slow:      0.3s ease;
+
+    /* --- Z-index --- */
+    --z-base:               1;
+    --z-sticky:             10;
+    --z-modal-backdrop:     50;
+    --z-modal:              60;
+    --z-toast:              70;
+
+    /* --- Layout --- */
+    --app-max-width:        390px;
+    --app-padding-x:        28px;
+    --safe-area-top:        60px;
+    --safe-area-bottom:     48px;
+}
+
+
+/* ============================================
+   2. RESET & BASE
+   ============================================ */
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    font-weight: var(--weight-regular);
+    line-height: var(--leading-normal);
+    color: var(--color-text);
+    background: var(--color-bg);
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+}
+
+input, select {
+    font-family: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+
+/* ============================================
+   3. TYPOGRAPHY
+   ============================================ */
+
+.text-xs     { font-size: var(--text-xs); }
+.text-sm     { font-size: var(--text-sm); }
+.text-base   { font-size: var(--text-base); }
+.text-md     { font-size: var(--text-md); }
+.text-lg     { font-size: var(--text-lg); }
+.text-xl     { font-size: var(--text-xl); }
+.text-2xl    { font-size: var(--text-2xl); }
+
+.font-mono   { font-family: var(--font-mono); }
+.font-medium { font-weight: var(--weight-medium); }
+.font-semi   { font-weight: var(--weight-semibold); }
+.font-bold   { font-weight: var(--weight-bold); }
+
+.text-dim       { color: var(--color-text-dim); }
+.text-secondary { color: var(--color-text-secondary); }
+
+
+/* ============================================
+   4. APP SHELL
+   ============================================ */
+
+.app-shell {
+    width: 100%;
+    max-width: var(--app-max-width);
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--safe-area-top) var(--app-padding-x) var(--space-5);
+}
+
+.app-header__title {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+}
+
+.app-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-footer {
+    padding-bottom: var(--safe-area-bottom);
+}
+
+
+/* ============================================
+   5. ICON BUTTON (settings, etc.)
+   ============================================ */
+
+.icon-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-full);
+    border: 1.5px solid var(--color-border);
+    background: var(--color-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-normal);
+}
+
+.icon-btn:hover {
+    border-color: var(--color-text-dim);
+    background: var(--color-surface-hover);
+}
+
+.icon-btn:active {
+    background: var(--color-surface-active);
+}
+
+.icon-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--color-text-dim);
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+
+/* ============================================
+   6. STATUS PILL
+   ============================================ */
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+}
+
+.status-pill--work {
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
+}
+
+.status-pill--rest {
+    background: var(--color-rest-bg);
+    color: var(--color-rest-text);
+}
+
+.status-pill--warmup,
+.status-pill--cooldown {
+    background: var(--color-warning-bg);
+    color: var(--color-warning-text);
+}
+
+.status-pill__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: var(--radius-full);
+}
+
+.status-pill--work .status-pill__dot {
+    background: var(--color-success);
+    box-shadow: 0 0 6px rgba(76, 175, 80, 0.4);
+}
+
+.status-pill--rest .status-pill__dot {
+    background: var(--color-rest);
+    box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
+}
+
+.status-pill--warmup .status-pill__dot,
+.status-pill--cooldown .status-pill__dot {
+    background: var(--color-warning);
+    box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+}
+
+
+/* ============================================
+   7. TIMER
+   ============================================ */
+
+.timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-5);
+    flex: 1;
+}
+
+.timer__container {
+    position: relative;
+    width: 270px;
+    height: 270px;
+}
+
+.timer__svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.timer__track {
+    fill: none;
+    stroke: var(--color-surface-hover);
+    stroke-width: 6;
+}
+
+.timer__progress {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear;
+}
+
+.timer__content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.timer__value {
+    font-family: var(--font-mono);
+    font-size: var(--text-timer);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-timer);
+    line-height: var(--leading-tight);
+    color: var(--color-text);
+}
+
+.timer__sub {
+    font-size: var(--text-sm);
+    color: var(--color-text-dim);
+    margin-top: var(--space-2);
+    font-weight: var(--weight-medium);
+}
+
+
+/* ============================================
+   8. PROGRESS STEPS
+   ============================================ */
+
+.progress-steps {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-1);
+    padding: 0 var(--space-10) var(--space-5);
+}
+
+.progress-steps__step {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-surface-hover);
+    transition: background var(--transition-normal);
+}
+
+.progress-steps__step--done {
+    background: var(--color-text);
+}
+
+.progress-steps__step--active {
+    background: var(--color-text-secondary);
+}
+
+
+/* ============================================
+   9. CONTROL BUTTONS
+   ============================================ */
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-6);
+    padding: var(--space-3) var(--app-padding-x);
+}
+
+.ctrl-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.ctrl-btn--secondary {
+    width: 54px;
+    height: 54px;
+    border-radius: var(--radius-full);
+    background: var(--color-surface);
+    border: 1.5px solid var(--color-border);
+}
+
+.ctrl-btn--secondary svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--color-text-dim);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.ctrl-btn--secondary:hover {
+    border-color: var(--color-text-dim);
+    background: var(--color-surface-hover);
+}
+
+.ctrl-btn--secondary:active {
+    background: var(--color-surface-active);
+}
+
+.ctrl-btn--primary {
+    width: 76px;
+    height: 76px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+}
+
+.ctrl-btn--primary svg {
+    width: 28px;
+    height: 28px;
+    fill: var(--color-text-inverse);
+    stroke: none;
+}
+
+.ctrl-btn--primary:hover {
+    background: var(--color-accent-hover);
+    transform: scale(1.04);
+}
+
+.ctrl-btn--primary:active {
+    background: var(--color-accent-active);
+    transform: scale(0.98);
+}
+
+.ctrl-btn--danger {
+    border-color: var(--color-danger-bg);
+}
+
+.ctrl-btn--danger:hover {
+    border-color: var(--color-danger);
+    background: var(--color-danger-bg);
+}
+
+.ctrl-btn--danger:hover svg {
+    stroke: var(--color-danger-text);
+}
+
+
+/* ============================================
+   10. SPOTIFY BAR
+   ============================================ */
+
+.spotify-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin: var(--space-3) var(--app-padding-x);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+}
+
+.spotify-bar__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--color-spotify);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.spotify-bar__icon svg {
+    width: 22px;
+    height: 22px;
+    fill: #fff;
+}
+
+.spotify-bar__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.spotify-bar__song {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spotify-bar__artist {
+    font-size: var(--text-xs);
+    color: var(--color-text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spotify-bar__progress {
+    width: 100%;
+    height: 2px;
+    background: var(--color-surface-hover);
+    border-radius: 1px;
+    margin-top: 6px;
+    overflow: hidden;
+}
+
+.spotify-bar__progress-fill {
+    height: 100%;
+    background: var(--color-spotify);
+    border-radius: 1px;
+    transition: width 1s linear;
+}
+
+
+/* ============================================
+   11. MODAL
+   ============================================ */
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 17, 19, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: var(--z-modal-backdrop);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-slow), visibility var(--transition-slow);
+}
+
+.modal-backdrop--visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    width: 100%;
+    max-width: var(--app-max-width);
+    max-height: 85vh;
+    background: var(--color-surface);
+    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+    border-top: 1px solid var(--color-border);
+    padding: var(--space-5) var(--app-padding-x) var(--safe-area-bottom);
+    overflow-y: auto;
+    z-index: var(--z-modal);
+    box-shadow: var(--shadow-modal);
+    transition: transform var(--transition-slow);
+}
+
+.modal--visible {
+    transform: translateX(-50%) translateY(0);
+}
+
+.modal__handle {
+    width: 36px;
+    height: 4px;
+    background: var(--color-surface-hover);
+    border-radius: 2px;
+    margin: 0 auto var(--space-5);
+}
+
+.modal__title {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    margin-bottom: var(--space-6);
+    letter-spacing: var(--tracking-tight);
+}
+
+
+/* ============================================
+   12. SETTINGS CONTROLS
+   ============================================ */
+
+.setting-group {
+    margin-bottom: 18px;
+}
+
+.setting-group__label {
+    font-size: var(--text-sm);
+    color: var(--color-text-dim);
+    font-weight: var(--weight-medium);
+    margin-bottom: var(--space-2);
+}
+
+.setting-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+}
+
+.setting-stepper__btn {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    border: 1.5px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-dim);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--weight-medium);
+    transition: all var(--transition-fast);
+}
+
+.setting-stepper__btn:hover {
+    border-color: var(--color-text-dim);
+    color: var(--color-text);
+}
+
+.setting-stepper__btn:active {
+    background: var(--color-surface-active);
+}
+
+.setting-stepper__value {
+    font-family: var(--font-mono);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-medium);
+    text-align: center;
+}
+
+.setting-stepper__unit {
+    font-size: var(--text-xs);
+    color: var(--color-text-dim);
+    margin-top: 2px;
+    text-align: center;
+}
+
+
+/* ============================================
+   13. BUTTONS
+   ============================================ */
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-md);
+    font-weight: var(--weight-semibold);
+    transition: all var(--transition-fast);
+}
+
+.btn--primary {
+    background: var(--color-accent);
+    color: var(--color-text-inverse);
+}
+
+.btn--primary:hover {
+    background: var(--color-accent-hover);
+}
+
+.btn--primary:active {
+    background: var(--color-accent-active);
+}
+
+.btn--outline {
+    background: var(--color-surface-hover);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+}
+
+.btn--outline:hover {
+    border-color: var(--color-text-dim);
+}
+
+.btn--spotify {
+    background: rgba(29, 185, 84, 0.08);
+    color: var(--color-spotify);
+    border: 1px solid rgba(29, 185, 84, 0.2);
+}
+
+.btn--spotify:hover {
+    background: rgba(29, 185, 84, 0.15);
+    border-color: rgba(29, 185, 84, 0.4);
+}
+
+
+/* ============================================
+   14. UTILITY CLASSES
+   ============================================ */
+
+.flex          { display: flex; }
+.flex-col      { flex-direction: column; }
+.items-center  { align-items: center; }
+.justify-center { justify-content: center; }
+.text-center   { text-align: center; }
+.gap-1         { gap: var(--space-1); }
+.gap-2         { gap: var(--space-2); }
+.gap-3         { gap: var(--space-3); }
+.gap-4         { gap: var(--space-4); }
+.gap-6         { gap: var(--space-6); }
+.mt-2          { margin-top: var(--space-2); }
+.mt-4          { margin-top: var(--space-4); }
+.mb-2          { margin-bottom: var(--space-2); }
+.mb-4          { margin-bottom: var(--space-4); }
+.w-full        { width: 100%; }
+.truncate      { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sr-only       { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+
+
+/* ============================================
+   15. ANIMATIONS
+   ============================================ */
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slide-up {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-pulse { animation: pulse 2s ease-in-out infinite; }
+.animate-fade-in { animation: fade-in var(--transition-slow) ease; }
+.animate-slide-up { animation: slide-up var(--transition-slow) ease; }

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup 4 – Bold Sport</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #111;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .app {
+            width: 390px;
+            height: 844px;
+            background: #000;
+            border-radius: 40px;
+            border: 2px solid #1a1a1a;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 60px 24px 12px;
+        }
+
+        .app-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            letter-spacing: 4px;
+            color: #fff;
+        }
+
+        .settings-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 4px;
+            border: 2px solid #e11d48;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .settings-btn:hover {
+            background: #e11d48;
+        }
+
+        .settings-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: #e11d48;
+            fill: none;
+        }
+
+        .settings-btn:hover svg {
+            stroke: #fff;
+        }
+
+        /* Status bar */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 12px 24px;
+            background: #e11d48;
+            margin: 8px 24px;
+            clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+        }
+
+        .status-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            letter-spacing: 3px;
+        }
+
+        .status-divider {
+            width: 2px;
+            height: 16px;
+            background: #ffffff66;
+        }
+
+        .round-info {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* Timer */
+        .timer-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .timer-value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 140px;
+            line-height: 0.9;
+            letter-spacing: 8px;
+            text-shadow: 0 0 60px #e11d4844;
+        }
+
+        .timer-sub {
+            font-size: 14px;
+            color: #ffffff44;
+            margin-top: 4px;
+            font-weight: 500;
+            letter-spacing: 2px;
+        }
+
+        .timer-bar {
+            width: 200px;
+            height: 4px;
+            background: #1a1a1a;
+            margin-top: 20px;
+        }
+
+        .timer-bar-fill {
+            width: 80%;
+            height: 100%;
+            background: #e11d48;
+        }
+
+        /* Round blocks */
+        .round-blocks {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            padding: 0 40px 16px;
+        }
+
+        .block {
+            flex: 1;
+            height: 8px;
+            background: #1a1a1a;
+            clip-path: polygon(2px 0, 100% 0, calc(100% - 2px) 100%, 0 100%);
+        }
+
+        .block.done {
+            background: #e11d48;
+        }
+
+        .block.active {
+            background: #fff;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+        }
+
+        .ctrl-btn {
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .ctrl-btn-secondary {
+            width: 60px;
+            height: 60px;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+        }
+
+        .ctrl-btn-secondary svg {
+            width: 24px;
+            height: 24px;
+            stroke: #888;
+            fill: none;
+        }
+
+        .ctrl-btn-secondary:hover {
+            border-color: #e11d48;
+        }
+
+        .ctrl-btn-secondary:hover svg {
+            stroke: #e11d48;
+        }
+
+        .ctrl-btn-primary {
+            width: 100px;
+            height: 60px;
+            background: #e11d48;
+            border: none;
+            clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+        }
+
+        .ctrl-btn-primary svg {
+            width: 28px;
+            height: 28px;
+            fill: #fff;
+            stroke: none;
+        }
+
+        .ctrl-btn-primary:hover {
+            background: #f43f5e;
+        }
+
+        /* Spotify bar */
+        .spotify-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 24px 48px;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .spotify-icon {
+            width: 40px;
+            height: 40px;
+            background: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%);
+        }
+
+        .spotify-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: #1DB954;
+        }
+
+        .spotify-info { flex: 1; min-width: 0; }
+
+        .spotify-song {
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .spotify-artist {
+            font-size: 11px;
+            color: #ffffff44;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .spotify-progress {
+            width: 100%;
+            height: 2px;
+            background: #1a1a1a;
+            margin-top: 6px;
+        }
+
+        .spotify-progress-fill {
+            width: 35%;
+            height: 100%;
+            background: #e11d48;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: #000000dd;
+            display: flex;
+            align-items: flex-end;
+            z-index: 10;
+        }
+
+        .modal {
+            width: 100%;
+            background: #0a0a0a;
+            border-top: 3px solid #e11d48;
+            padding: 24px 24px 48px;
+            max-height: 85%;
+            overflow-y: auto;
+        }
+
+        .modal-handle {
+            width: 40px;
+            height: 3px;
+            background: #333;
+            margin: 0 auto 20px;
+        }
+
+        .modal-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            letter-spacing: 4px;
+            margin-bottom: 24px;
+        }
+
+        .setting-group { margin-bottom: 16px; }
+
+        .setting-label {
+            font-size: 11px;
+            color: #e11d48;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .setting-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #111;
+            border: 1px solid #222;
+            padding: 10px 14px;
+            clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+        }
+
+        .setting-control button {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #333;
+            background: transparent;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%);
+        }
+
+        .setting-control button:hover {
+            border-color: #e11d48;
+            color: #e11d48;
+        }
+
+        .setting-value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .setting-unit {
+            font-size: 10px;
+            color: #ffffff33;
+            margin-top: 0;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .modal-save-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            background: #e11d48;
+            color: #fff;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            letter-spacing: 4px;
+            cursor: pointer;
+            margin-top: 8px;
+            clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+        }
+
+        .spotify-connect-btn {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #1DB95444;
+            background: transparent;
+            color: #1DB954;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+        }
+
+        /* Toggle */
+        .view-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .view-toggle button {
+            padding: 8px 16px;
+            border: 2px solid #333;
+            background: #000;
+            color: #888;
+            font-size: 12px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+        }
+
+        .view-toggle button.active {
+            background: #e11d48;
+            color: #fff;
+            border-color: #e11d48;
+        }
+    </style>
+</head>
+<body>
+
+<div class="view-toggle">
+    <button class="active" onclick="showView('main')">Hovedskjerm</button>
+    <button onclick="showView('modal')">Innstillinger</button>
+</div>
+
+<div class="app">
+
+    <div class="header">
+        <div class="app-title">INTERVALL</div>
+        <div class="settings-btn" onclick="showView('modal')">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"/>
+                <line x1="4" y1="10" x2="4" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="12"/>
+                <line x1="12" y1="8" x2="12" y2="3"/>
+                <line x1="20" y1="21" x2="20" y2="16"/>
+                <line x1="20" y1="12" x2="20" y2="3"/>
+                <line x1="1" y1="14" x2="7" y2="14"/>
+                <line x1="9" y1="8" x2="15" y2="8"/>
+                <line x1="17" y1="16" x2="23" y2="16"/>
+            </svg>
+        </div>
+    </div>
+
+    <div class="status-bar">
+        <div class="status-label">ARBEID</div>
+        <div class="status-divider"></div>
+        <div class="round-info">RUNDE 3 / 8</div>
+    </div>
+
+    <div class="timer-section">
+        <div class="timer-value">0:24</div>
+        <div class="timer-sub">AV 0:30</div>
+        <div class="timer-bar"><div class="timer-bar-fill"></div></div>
+    </div>
+
+    <div class="round-blocks">
+        <div class="block done"></div>
+        <div class="block done"></div>
+        <div class="block done"></div>
+        <div class="block done"></div>
+        <div class="block active"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+    </div>
+
+    <div class="controls">
+        <button class="ctrl-btn ctrl-btn-secondary">
+            <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="16" height="16"/>
+            </svg>
+        </button>
+        <button class="ctrl-btn ctrl-btn-primary">
+            <svg viewBox="0 0 24 24">
+                <rect x="6" y="4" width="4" height="16"/>
+                <rect x="14" y="4" width="4" height="16"/>
+            </svg>
+        </button>
+        <button class="ctrl-btn ctrl-btn-secondary">
+            <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"/>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+            </svg>
+        </button>
+    </div>
+
+    <div class="spotify-bar">
+        <div class="spotify-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        </div>
+        <div class="spotify-info">
+            <div class="spotify-song">POWER (FEAT. DWELE)</div>
+            <div class="spotify-artist">KANYE WEST</div>
+            <div class="spotify-progress"><div class="spotify-progress-fill"></div></div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <div class="modal-title">INNSTILLINGER</div>
+
+            <div class="setting-group">
+                <div class="setting-label">Oppvarming</div>
+                <div class="setting-control">
+                    <button>−</button>
+                    <div><div class="setting-value">3:00</div><div class="setting-unit">minutter</div></div>
+                    <button>+</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-label">Intervall (arbeid)</div>
+                <div class="setting-control">
+                    <button>−</button>
+                    <div><div class="setting-value">0:30</div><div class="setting-unit">sekunder</div></div>
+                    <button>+</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-label">Pause</div>
+                <div class="setting-control">
+                    <button>−</button>
+                    <div><div class="setting-value">0:15</div><div class="setting-unit">sekunder</div></div>
+                    <button>+</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-label">Antall runder</div>
+                <div class="setting-control">
+                    <button>−</button>
+                    <div><div class="setting-value">8</div><div class="setting-unit">runder</div></div>
+                    <button>+</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-label">Nedkjøling</div>
+                <div class="setting-control">
+                    <button>−</button>
+                    <div><div class="setting-value">3:00</div><div class="setting-unit">minutter</div></div>
+                    <button>+</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-label">Musikk</div>
+                <button class="spotify-connect-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+                    Koble til Spotify
+                </button>
+            </div>
+
+            <button class="modal-save-btn" onclick="showView('main')">LAGRE</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function showView(view) {
+    const overlay = document.getElementById('modalOverlay');
+    const btns = document.querySelectorAll('.view-toggle button');
+    if (view === 'modal') {
+        overlay.style.display = 'flex';
+        btns[0].classList.remove('active');
+        btns[1].classList.add('active');
+    } else {
+        overlay.style.display = 'none';
+        btns[1].classList.remove('active');
+        btns[0].classList.add('active');
+    }
+}
+</script>
+
+</body>
+</html>

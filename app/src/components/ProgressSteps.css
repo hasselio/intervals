@@ -1,0 +1,22 @@
+.progress-steps {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 40px 20px;
+}
+
+.progress-steps__step {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-surface-hover);
+  transition: background var(--transition-normal);
+}
+
+.progress-steps__step--done {
+  background: var(--color-text);
+}
+
+.progress-steps__step--active {
+  background: var(--color-text-secondary);
+}

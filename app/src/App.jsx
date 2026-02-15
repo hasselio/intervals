@@ -1,0 +1,131 @@
+import { useState, useCallback, useEffect } from 'react'
+import './App.css'
+import { useTimer, STATUS_IDLE, STATUS_RUNNING, PHASE_WORK, PHASE_REST } from './hooks/useTimer'
+import { useWakeLock } from './hooks/useWakeLock'
+import { useAudioCues } from './hooks/useAudioCues'
+import { Timer } from './components/Timer'
+import { StatusPill } from './components/StatusPill'
+import { ProgressSteps } from './components/ProgressSteps'
+import { Controls } from './components/Controls'
+import { SpotifyBar } from './components/SpotifyBar'
+import { SettingsModal } from './components/SettingsModal'
+
+function App() {
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const { playCountdown, playPhaseChange, playComplete, vibrate, getCtx } = useAudioCues()
+  const wakeLock = useWakeLock()
+
+  const onPhaseChange = useCallback((phase) => {
+    playPhaseChange()
+    vibrate([200, 100, 200])
+  }, [playPhaseChange, vibrate])
+
+  const onTick = useCallback((timeLeft, settings) => {
+    if (timeLeft <= (settings?.countdownSeconds || 5) && timeLeft > 0) {
+      playCountdown()
+    }
+  }, [playCountdown])
+
+  const onComplete = useCallback(() => {
+    playComplete()
+    vibrate([300, 100, 300, 100, 300])
+    wakeLock.release()
+  }, [playComplete, vibrate, wakeLock])
+
+  const timer = useTimer({ onPhaseChange, onTick, onComplete })
+
+  const handleStart = useCallback(() => {
+    getCtx()
+    timer.start()
+    wakeLock.request()
+  }, [timer, wakeLock, getCtx])
+
+  const handleStop = useCallback(() => {
+    timer.stop()
+    wakeLock.release()
+  }, [timer, wakeLock])
+
+  const handleTogglePause = useCallback(() => {
+    timer.togglePause()
+  }, [timer])
+
+  const handleSaveSettings = useCallback((newSettings) => {
+    timer.updateSettings(newSettings)
+  }, [timer])
+
+  const isTimerRunning = timer.status === STATUS_RUNNING
+  const isRestPhase = timer.currentPhase?.type === PHASE_REST
+
+  useEffect(() => {
+    if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {})
+    }
+    if (import.meta.env.DEV && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs =>
+        regs.forEach(r => r.unregister())
+      )
+    }
+  }, [])
+
+  return (
+    <div className="app-shell">
+      <header className="app-header">
+        <h1 className="app-header__title">Intervals</h1>
+        <button
+          className="icon-btn"
+          onClick={() => setSettingsOpen(true)}
+          aria-label="Innstillinger"
+        >
+          <svg viewBox="0 0 24 24">
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="18" x2="20" y2="18" />
+            <circle cx="8" cy="6" r="2" fill="var(--color-bg)" />
+            <circle cx="16" cy="12" r="2" fill="var(--color-bg)" />
+            <circle cx="10" cy="18" r="2" fill="var(--color-bg)" />
+          </svg>
+        </button>
+      </header>
+
+      <div className="app-content">
+        <StatusPill
+          phase={timer.currentPhase}
+          currentRound={timer.currentRound}
+          totalRounds={timer.settings.rounds}
+        />
+
+        <Timer
+          timeLeft={timer.status === STATUS_IDLE ? timer.settings.work : timer.timeLeft}
+          phaseDuration={timer.status === STATUS_IDLE ? timer.settings.work : timer.phaseDuration}
+          totalRemaining={timer.status !== STATUS_IDLE ? timer.totalRemaining : 0}
+          showTotal={timer.status !== STATUS_IDLE}
+        />
+
+        <ProgressSteps
+          phases={timer.phases}
+          phaseIndex={timer.phaseIndex}
+        />
+
+        <Controls
+          status={timer.status}
+          onStart={handleStart}
+          onTogglePause={handleTogglePause}
+          onStop={handleStop}
+        />
+      </div>
+
+      <div className="app-footer">
+        <SpotifyBar timerRunning={isTimerRunning} isRestPhase={isRestPhase} />
+      </div>
+
+      <SettingsModal
+        visible={settingsOpen}
+        settings={timer.settings}
+        onSave={handleSaveSettings}
+        onClose={() => setSettingsOpen(false)}
+      />
+    </div>
+  )
+}
+
+export default App

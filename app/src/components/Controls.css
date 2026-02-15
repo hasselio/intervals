@@ -1,0 +1,76 @@
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 28px;
+}
+
+.ctrl-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.ctrl-btn--secondary {
+  width: 54px;
+  height: 54px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+}
+
+.ctrl-btn--secondary svg {
+  width: 22px;
+  height: 22px;
+  stroke: var(--color-text-dim);
+  fill: none;
+}
+
+.ctrl-btn--secondary:hover {
+  border-color: var(--color-text-dim);
+  background: var(--color-surface-hover);
+}
+
+.ctrl-btn--secondary:active {
+  background: var(--color-surface-active);
+}
+
+.ctrl-btn--danger:hover {
+  border-color: var(--color-danger);
+  background: var(--color-danger-bg);
+}
+
+.ctrl-btn--danger:hover svg {
+  stroke: var(--color-danger-text);
+}
+
+.ctrl-btn--primary {
+  width: 76px;
+  height: 76px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+}
+
+.ctrl-btn--primary svg {
+  width: 28px;
+  height: 28px;
+  fill: var(--color-text-inverse);
+  stroke: none;
+}
+
+.ctrl-btn--primary:hover {
+  background: var(--color-accent-hover);
+  transform: scale(1.04);
+}
+
+.ctrl-btn--primary:active {
+  background: var(--color-accent-active);
+  transform: scale(0.98);
+}
+
+.ctrl-btn--start {
+  width: 80px;
+  height: 80px;
+}

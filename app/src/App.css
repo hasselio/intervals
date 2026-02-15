@@ -1,0 +1,65 @@
+.app-shell {
+  width: 100%;
+  max-width: 390px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 56px 28px 16px;
+}
+
+.app-header__title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-normal);
+}
+
+.icon-btn:hover {
+  border-color: var(--color-text-dim);
+  background: var(--color-surface-hover);
+}
+
+.icon-btn:active {
+  background: var(--color-surface-active);
+}
+
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--color-text-dim);
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.app-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-footer {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 24px);
+}
