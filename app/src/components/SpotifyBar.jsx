@@ -49,6 +49,7 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
   const [playlists, setPlaylists] = useState([]);
   const [showPlaylists, setShowPlaylists] = useState(false);
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+  const [hasDevice, setHasDevice] = useState(!IS_MOBILE);
   const playerRef = useRef(null);
   const progressInterval = useRef(null);
   const pollInterval = useRef(null);
@@ -247,24 +248,37 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
     };
   }, [token]);
 
-  // --- Mobile: find active device and mark connected ---
-  useEffect(() => {
-    if (!token || !IS_MOBILE) return;
-    console.log('[Spotify] Mobile mode: looking for active device...');
-    spotifyApi(token, '/me/player/devices').then(async res => {
-      if (!res.ok) return;
+  // --- Mobile: find active device ---
+  const findDevice = useCallback(async () => {
+    if (!tokenRef.current) return null;
+    try {
+      const res = await spotifyApi(tokenRef.current, '/me/player/devices');
+      if (!res.ok) return null;
       const data = await res.json();
       const active = data.devices?.find(d => d.is_active) || data.devices?.[0];
       if (active) {
         console.log('[Spotify] Found device:', active.name);
         setDeviceId(active.id);
+        setHasDevice(true);
         setConnected(true);
-      } else {
-        console.log('[Spotify] No active device. Open Spotify on your phone.');
-        setConnected(true); // Still mark connected so API calls work without device_id
+        return active.id;
       }
-    }).catch(() => {});
-  }, [token]);
+    } catch {}
+    setHasDevice(false);
+    setConnected(true);
+    return null;
+  }, []);
+
+  useEffect(() => {
+    if (!token || !IS_MOBILE) return;
+    console.log('[Spotify] Mobile mode: looking for active device...');
+    findDevice();
+    // Re-check for device every 5s if none found
+    const interval = setInterval(async () => {
+      if (!hasDevice) await findDevice();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [token, hasDevice, findDevice]);
 
   // --- Mobile: poll for track state ---
   useEffect(() => {
@@ -288,20 +302,36 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
     prevTimerRunning.current = timerRunning;
 
     if (timerRunning && !wasRunning) {
-      const playBody = (!hasStartedRef.current && selectedPlaylist)
-        ? { context_uri: selectedPlaylist.uri }
-        : undefined;
-      const deviceParam = deviceId ? `?device_id=${deviceId}` : '';
-      const headers = { 'Authorization': `Bearer ${token}` };
-      if (playBody) headers['Content-Type'] = 'application/json';
-      console.log('[Spotify] Play:', playBody ? 'starting playlist' : 'resuming');
-      fetch(`https://api.spotify.com/v1/me/player/play${deviceParam}`, {
-        method: 'PUT', headers,
-        body: playBody ? JSON.stringify(playBody) : undefined,
-      }).then(res => {
-        if (!res.ok) res.text().then(t => console.error('[Spotify] Play failed:', res.status, t));
-        else hasStartedRef.current = true;
-      }).catch(err => console.error('[Spotify] Play error:', err));
+      // On mobile, try to find device first if we don't have one
+      const tryPlay = async (devId) => {
+        const playBody = (!hasStartedRef.current && selectedPlaylist)
+          ? { context_uri: selectedPlaylist.uri }
+          : undefined;
+        const deviceParam = devId ? `?device_id=${devId}` : '';
+        const headers = { 'Authorization': `Bearer ${token}` };
+        if (playBody) headers['Content-Type'] = 'application/json';
+        console.log('[Spotify] Play:', playBody ? 'starting playlist' : 'resuming', devId ? `on ${devId}` : '');
+        const res = await fetch(`https://api.spotify.com/v1/me/player/play${deviceParam}`, {
+          method: 'PUT', headers,
+          body: playBody ? JSON.stringify(playBody) : undefined,
+        });
+        if (!res.ok) {
+          const t = await res.text();
+          console.error('[Spotify] Play failed:', res.status, t);
+        } else {
+          hasStartedRef.current = true;
+        }
+      };
+
+      if (IS_MOBILE && !deviceId) {
+        // Try to find a device first
+        findDevice().then(devId => {
+          if (devId) tryPlay(devId);
+          else console.warn('[Spotify] No device found. Open Spotify app.');
+        });
+      } else {
+        tryPlay(deviceId).catch(err => console.error('[Spotify] Play error:', err));
+      }
     } else if (!timerRunning && wasRunning) {
       console.log('[Spotify] Stop: pausing');
       const deviceParam = deviceId ? `?device_id=${deviceId}` : '';
@@ -468,7 +498,11 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
         )}
         <div className="spotify-bar__info">
           <div className="spotify-bar__song">{track?.name || (selectedPlaylist ? selectedPlaylist.name : 'Ingen sang spilles')}</div>
-          <div className="spotify-bar__artist">{track?.artist || (selectedPlaylist ? 'Klar – trykk Start for å spille' : 'Velg en spilleliste')}</div>
+          <div className="spotify-bar__artist">
+            {track?.artist || (IS_MOBILE && !hasDevice
+              ? 'Åpne Spotify-appen først'
+              : (selectedPlaylist ? 'Klar – trykk Start for å spille' : 'Velg en spilleliste'))}
+          </div>
         </div>
         {track && (
           <div className="spotify-bar__mini-ctrl">
