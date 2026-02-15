@@ -1,8 +1,8 @@
-const CACHE_NAME = 'intervall-v1';
+const CACHE_NAME = 'intervall-v2';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/icon.svg',
+  './',
+  './index.html',
+  './icon.svg',
 ];
 
 self.addEventListener('install', (event) => {
