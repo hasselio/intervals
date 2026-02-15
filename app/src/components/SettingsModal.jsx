@@ -87,9 +87,7 @@ export function SettingsModal({ visible, settings, onSave, onClose }) {
         <button className="modal__save-btn" onClick={handleSave}>
           Lagre
         </button>
-        <div>Laget av: Kristian Hassel</div>
       </div>
-      
     </>,
     document.body
   );

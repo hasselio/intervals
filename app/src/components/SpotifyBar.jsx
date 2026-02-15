@@ -301,8 +301,9 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
     const wasRunning = prevTimerRunning.current;
     prevTimerRunning.current = timerRunning;
 
+    console.log('[Spotify] Timer effect:', { timerRunning, wasRunning, connected, deviceId: !!deviceId, token: !!token, IS_MOBILE, hasDevice, selectedPlaylist: selectedPlaylist?.name });
+
     if (timerRunning && !wasRunning) {
-      // On mobile, try to find device first if we don't have one
       const tryPlay = async (devId) => {
         const playBody = (!hasStartedRef.current && selectedPlaylist)
           ? { context_uri: selectedPlaylist.uri }
@@ -320,11 +321,12 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
           console.error('[Spotify] Play failed:', res.status, t);
         } else {
           hasStartedRef.current = true;
+          // Update track info after a short delay
+          setTimeout(updatePlaybackState, 1000);
         }
       };
 
       if (IS_MOBILE && !deviceId) {
-        // Try to find a device first
         findDevice().then(devId => {
           if (devId) tryPlay(devId);
           else console.warn('[Spotify] No device found. Open Spotify app.');
@@ -340,7 +342,7 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
         headers: { 'Authorization': `Bearer ${token}` },
       }).catch(() => {});
     }
-  }, [timerRunning, connected, deviceId, token, selectedPlaylist]);
+  }, [timerRunning, connected, deviceId, token, selectedPlaylist, findDevice, updatePlaybackState]);
 
   // --- Pause during rest, resume during work ---
   const prevIsRest = useRef(false);
