@@ -4,7 +4,9 @@
 <body>
 <script>
   // Grab the query string from Spotify and redirect to the main app
-  window.location.replace('/' + window.location.search);
+  // Detect base path from current URL (e.g. /intervals/callback -> /intervals/)
+  var path = window.location.pathname.replace(/\/callback\/?$/, '/');
+  window.location.replace(path + window.location.search);
 </script>
 </body>
 </html>
