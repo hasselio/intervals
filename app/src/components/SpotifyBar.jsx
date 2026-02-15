@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import './SpotifyBar.css';
 
 const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID || '';
 const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
 const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI || (window.location.origin + BASE_PATH + '/callback');
-const SCOPES = 'streaming user-read-email user-read-private user-modify-playback-state user-read-playback-state user-library-read playlist-read-private';
+const SCOPES = 'streaming user-read-email user-read-private user-modify-playback-state user-read-playback-state user-read-currently-playing user-library-read playlist-read-private';
+const IS_MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 function generateCodeVerifier() {
   const array = new Uint8Array(64);
@@ -24,6 +25,16 @@ const SpotifyIcon = () => (
   <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
 );
 
+// --- Spotify API helper ---
+async function spotifyApi(token, endpoint, method = 'GET', body) {
+  const headers = { 'Authorization': `Bearer ${token}` };
+  if (body) headers['Content-Type'] = 'application/json';
+  const res = await fetch(`https://api.spotify.com/v1${endpoint}`, {
+    method, headers, body: body ? JSON.stringify(body) : undefined,
+  });
+  return res;
+}
+
 export function SpotifyBar({ timerRunning, isRestPhase }) {
   const [token, setToken] = useState(() => localStorage.getItem('spotify_token') || '');
   const tokenRef = useRef(token);
@@ -40,6 +51,7 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const playerRef = useRef(null);
   const progressInterval = useRef(null);
+  const pollInterval = useRef(null);
   const hasStartedRef = useRef(false);
 
   useEffect(() => { tokenRef.current = token; }, [token]);
@@ -96,7 +108,7 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
         localStorage.setItem('spotify_refresh_token', data.refresh_token || '');
         localStorage.removeItem('spotify_code_verifier');
         setToken(data.access_token);
-        window.history.replaceState({}, '', '/');
+        window.history.replaceState({}, '', window.location.pathname);
       }
     } catch (err) {
       console.error('Spotify token exchange failed:', err);
@@ -105,7 +117,7 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
 
   useEffect(() => { handleCallback(); }, [handleCallback]);
 
-  // Auto-refresh token on mount if we have one stored (it may be expired)
+  // Auto-refresh token on mount if stored token is expired
   useEffect(() => {
     if (!token) return;
     fetch('https://api.spotify.com/v1/me', {
@@ -115,7 +127,6 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
         console.log('[Spotify] Stored token expired, refreshing...');
         refreshAccessToken().then(newToken => {
           if (!newToken) {
-            console.warn('[Spotify] Refresh failed, clearing session');
             localStorage.removeItem('spotify_token');
             localStorage.removeItem('spotify_refresh_token');
             setToken('');
@@ -146,6 +157,7 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
 
   const disconnect = useCallback(() => {
     if (playerRef.current) playerRef.current.disconnect();
+    if (pollInterval.current) clearInterval(pollInterval.current);
     localStorage.removeItem('spotify_token');
     localStorage.removeItem('spotify_refresh_token');
     setToken('');
@@ -157,9 +169,30 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
     setPlaylists([]);
   }, []);
 
-  // --- SDK setup ---
+  // --- Poll playback state (mobile) or update from SDK events ---
+  const updatePlaybackState = useCallback(async () => {
+    if (!tokenRef.current) return;
+    try {
+      const res = await spotifyApi(tokenRef.current, '/me/player');
+      if (res.status === 200) {
+        const data = await res.json();
+        if (data?.item) {
+          setTrack({
+            name: data.item.name,
+            artist: data.item.artists.map(a => a.name).join(', '),
+            albumArt: data.item.album?.images?.[0]?.url || '',
+          });
+          setProgress(data.progress_ms || 0);
+          setDuration(data.item.duration_ms || 0);
+          setSpotifyPlaying(data.is_playing);
+        }
+      }
+    } catch {}
+  }, []);
+
+  // --- SDK setup (desktop only) ---
   useEffect(() => {
-    if (!token) return;
+    if (!token || IS_MOBILE) return;
     if (document.getElementById('spotify-sdk')) return;
     const script = document.createElement('script');
     script.id = 'spotify-sdk';
@@ -172,7 +205,6 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
         name: 'Intervall',
         getOAuthToken: async cb => {
           let t = tokenRef.current;
-          // Quick check if token works
           const test = await fetch('https://api.spotify.com/v1/me', {
             headers: { 'Authorization': `Bearer ${t}` },
           }).catch(() => null);
@@ -185,17 +217,14 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
         volume: 0.5,
       });
       p.addListener('ready', ({ device_id }) => {
+        console.log('[Spotify] SDK ready, device:', device_id);
         setDeviceId(device_id);
         setConnected(true);
       });
       p.addListener('not_ready', () => setConnected(false));
       p.addListener('authentication_error', async () => {
-        console.warn('[Spotify] Auth error, refreshing token...');
         const refreshed = await refreshAccessToken();
-        if (!refreshed) {
-          console.error('[Spotify] Could not refresh, disconnecting');
-          disconnect();
-        }
+        if (!refreshed) disconnect();
       });
       p.addListener('player_state_changed', (state) => {
         if (!state) return;
@@ -218,41 +247,65 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
     };
   }, [token]);
 
-  // --- Transfer playback ---
+  // --- Mobile: find active device and mark connected ---
   useEffect(() => {
-    if (!connected || !deviceId || !token) return;
-    fetch('https://api.spotify.com/v1/me/player', {
-      method: 'PUT',
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ device_ids: [deviceId], play: false }),
+    if (!token || !IS_MOBILE) return;
+    console.log('[Spotify] Mobile mode: looking for active device...');
+    spotifyApi(token, '/me/player/devices').then(async res => {
+      if (!res.ok) return;
+      const data = await res.json();
+      const active = data.devices?.find(d => d.is_active) || data.devices?.[0];
+      if (active) {
+        console.log('[Spotify] Found device:', active.name);
+        setDeviceId(active.id);
+        setConnected(true);
+      } else {
+        console.log('[Spotify] No active device. Open Spotify on your phone.');
+        setConnected(true); // Still mark connected so API calls work without device_id
+      }
     }).catch(() => {});
+  }, [token]);
+
+  // --- Mobile: poll for track state ---
+  useEffect(() => {
+    if (!IS_MOBILE || !token || !connected) return;
+    updatePlaybackState();
+    pollInterval.current = setInterval(updatePlaybackState, 3000);
+    return () => { if (pollInterval.current) clearInterval(pollInterval.current); };
+  }, [token, connected, updatePlaybackState]);
+
+  // --- Transfer playback (desktop only) ---
+  useEffect(() => {
+    if (IS_MOBILE || !connected || !deviceId || !token) return;
+    spotifyApi(token, '/me/player', 'PUT', { device_ids: [deviceId], play: false }).catch(() => {});
   }, [connected, deviceId, token]);
 
   // --- Start/stop playback when timer starts/stops ---
   const prevTimerRunning = useRef(false);
   useEffect(() => {
-    if (!connected || !deviceId || !token) return;
+    if (!connected || !token) return;
     const wasRunning = prevTimerRunning.current;
     prevTimerRunning.current = timerRunning;
 
     if (timerRunning && !wasRunning) {
-      // Timer just started
-      const body = (!hasStartedRef.current && selectedPlaylist)
-        ? JSON.stringify({ context_uri: selectedPlaylist.uri })
+      const playBody = (!hasStartedRef.current && selectedPlaylist)
+        ? { context_uri: selectedPlaylist.uri }
         : undefined;
+      const deviceParam = deviceId ? `?device_id=${deviceId}` : '';
       const headers = { 'Authorization': `Bearer ${token}` };
-      if (body) headers['Content-Type'] = 'application/json';
-      console.log('[Spotify] Play:', body ? 'starting playlist' : 'resuming');
-      fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
-        method: 'PUT', headers, body,
+      if (playBody) headers['Content-Type'] = 'application/json';
+      console.log('[Spotify] Play:', playBody ? 'starting playlist' : 'resuming');
+      fetch(`https://api.spotify.com/v1/me/player/play${deviceParam}`, {
+        method: 'PUT', headers,
+        body: playBody ? JSON.stringify(playBody) : undefined,
       }).then(res => {
         if (!res.ok) res.text().then(t => console.error('[Spotify] Play failed:', res.status, t));
         else hasStartedRef.current = true;
       }).catch(err => console.error('[Spotify] Play error:', err));
     } else if (!timerRunning && wasRunning) {
-      // Timer just stopped
-      console.log('[Spotify] Stop: pausing playback');
-      fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`, {
+      console.log('[Spotify] Stop: pausing');
+      const deviceParam = deviceId ? `?device_id=${deviceId}` : '';
+      fetch(`https://api.spotify.com/v1/me/player/pause${deviceParam}`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` },
       }).catch(() => {});
@@ -262,19 +315,20 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
   // --- Pause during rest, resume during work ---
   const prevIsRest = useRef(false);
   useEffect(() => {
-    if (!connected || !deviceId || !token || !timerRunning) return;
+    if (!connected || !token || !timerRunning) return;
     const wasRest = prevIsRest.current;
     prevIsRest.current = isRestPhase;
+    const deviceParam = deviceId ? `?device_id=${deviceId}` : '';
 
     if (isRestPhase && !wasRest) {
       console.log('[Spotify] Rest phase: pausing');
-      fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`, {
+      fetch(`https://api.spotify.com/v1/me/player/pause${deviceParam}`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` },
       }).catch(() => {});
     } else if (!isRestPhase && wasRest) {
       console.log('[Spotify] Work phase: resuming');
-      fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+      fetch(`https://api.spotify.com/v1/me/player/play${deviceParam}`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` },
       }).catch(() => {});
@@ -296,9 +350,7 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
   const fetchPlaylists = useCallback(async () => {
     if (!token) return;
     try {
-      const res = await fetch('https://api.spotify.com/v1/me/playlists?limit=20', {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
+      const res = await spotifyApi(token, '/me/playlists?limit=20');
       const data = await res.json();
       setPlaylists(data.items || []);
     } catch (err) {
@@ -318,18 +370,43 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
     hasStartedRef.current = false;
   }, []);
 
-  // --- Playback controls ---
+  // --- Playback controls (hybrid: SDK on desktop, API on mobile) ---
   const togglePlay = useCallback(() => {
-    if (playerRef.current) playerRef.current.togglePlay();
-  }, []);
+    if (!IS_MOBILE && playerRef.current) {
+      playerRef.current.togglePlay();
+    } else if (token) {
+      const deviceParam = deviceId ? `?device_id=${deviceId}` : '';
+      const endpoint = spotifyPlaying ? 'pause' : 'play';
+      fetch(`https://api.spotify.com/v1/me/player/${endpoint}${deviceParam}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}` },
+      }).then(() => { if (IS_MOBILE) setTimeout(updatePlaybackState, 500); }).catch(() => {});
+    }
+  }, [token, deviceId, spotifyPlaying, updatePlaybackState]);
 
   const nextTrack = useCallback(() => {
-    if (playerRef.current) playerRef.current.nextTrack();
-  }, []);
+    if (!IS_MOBILE && playerRef.current) {
+      playerRef.current.nextTrack();
+    } else if (token) {
+      const deviceParam = deviceId ? `?device_id=${deviceId}` : '';
+      fetch(`https://api.spotify.com/v1/me/player/next${deviceParam}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+      }).then(() => { if (IS_MOBILE) setTimeout(updatePlaybackState, 500); }).catch(() => {});
+    }
+  }, [token, deviceId, updatePlaybackState]);
 
   const prevTrack = useCallback(() => {
-    if (playerRef.current) playerRef.current.previousTrack();
-  }, []);
+    if (!IS_MOBILE && playerRef.current) {
+      playerRef.current.previousTrack();
+    } else if (token) {
+      const deviceParam = deviceId ? `?device_id=${deviceId}` : '';
+      fetch(`https://api.spotify.com/v1/me/player/previous${deviceParam}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+      }).then(() => { if (IS_MOBILE) setTimeout(updatePlaybackState, 500); }).catch(() => {});
+    }
+  }, [token, deviceId, updatePlaybackState]);
 
   const progressPercent = duration > 0 ? (progress / duration) * 100 : 0;
 
