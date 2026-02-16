@@ -187,6 +187,54 @@
   transform: translateX(18px);
 }
 
+/* --- Volume slider --- */
+.s-slider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.s-slider__input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-surface-hover);
+  outline: none;
+}
+
+.s-slider__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  cursor: pointer;
+  border: 2px solid var(--color-bg);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.s-slider__input::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  cursor: pointer;
+  border: 2px solid var(--color-bg);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.s-slider__value {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  min-width: 36px;
+  text-align: right;
+  color: var(--color-text-dim);
+}
+
 /* --- Save button --- */
 .modal__save-btn {
   width: 100%;

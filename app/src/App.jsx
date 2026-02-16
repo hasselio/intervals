@@ -13,7 +13,10 @@ import { SettingsModal } from './components/SettingsModal'
 function App() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [showComplete, setShowComplete] = useState(false)
-  const { playCountdown, playHalfway, playPhaseChange, playComplete, vibrate, getCtx } = useAudioCues()
+  const [beepVolume, setBeepVolume] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('interval_settings'))?.beepVolume ?? 80; } catch { return 80; }
+  })
+  const { playCountdown, playHalfway, playPhaseChange, playComplete, playPreview, vibrate, getCtx } = useAudioCues(beepVolume)
   const wakeLock = useWakeLock()
 
   const onPhaseChange = useCallback((phase) => {
@@ -64,6 +67,7 @@ function App() {
 
   const handleSaveSettings = useCallback((newSettings) => {
     timer.updateSettings(newSettings)
+    if (newSettings.beepVolume !== undefined) setBeepVolume(newSettings.beepVolume)
   }, [timer])
 
   const isTimerRunning = timer.status === STATUS_RUNNING
@@ -138,6 +142,7 @@ function App() {
         settings={timer.settings}
         onSave={handleSaveSettings}
         onClose={() => setSettingsOpen(false)}
+        onPreviewVolume={playPreview}
       />
 
       {showComplete && (

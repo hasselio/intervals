@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import './SettingsModal.css';
 
@@ -38,7 +38,7 @@ function Toggle({ label, checked, onChange }) {
   );
 }
 
-export function SettingsModal({ visible, settings, onSave, onClose }) {
+export function SettingsModal({ visible, settings, onSave, onClose, onPreviewVolume }) {
   const [warmup, setWarmup] = useState(settings.warmup || 180);
   const [work, setWork] = useState(settings.work);
   const [rest, setRest] = useState(settings.rest);
@@ -47,6 +47,8 @@ export function SettingsModal({ visible, settings, onSave, onClose }) {
   const [countdownSeconds, setCountdownSeconds] = useState(settings.countdownSeconds || 5);
   const [warmupEnabled, setWarmupEnabled] = useState(settings.warmupEnabled || false);
   const [cooldownEnabled, setCooldownEnabled] = useState(settings.cooldownEnabled || false);
+  const [beepVolume, setBeepVolume] = useState(settings.beepVolume ?? 80);
+  const previewTimeout = useRef(null);
 
   useEffect(() => {
     setWarmup(settings.warmup || 180);
@@ -57,7 +59,17 @@ export function SettingsModal({ visible, settings, onSave, onClose }) {
     setCountdownSeconds(settings.countdownSeconds || 5);
     setWarmupEnabled(settings.warmupEnabled || false);
     setCooldownEnabled(settings.cooldownEnabled || false);
+    setBeepVolume(settings.beepVolume ?? 80);
   }, [settings]);
+
+  const handleVolumeChange = useCallback((val) => {
+    const v = Number(val);
+    setBeepVolume(v);
+    if (previewTimeout.current) clearTimeout(previewTimeout.current);
+    previewTimeout.current = setTimeout(() => {
+      onPreviewVolume?.(v / 100);
+    }, 150);
+  }, [onPreviewVolume]);
 
   const handleSave = () => {
     onSave({
@@ -69,6 +81,7 @@ export function SettingsModal({ visible, settings, onSave, onClose }) {
       countdownSeconds,
       warmupEnabled,
       cooldownEnabled,
+      beepVolume,
     });
     onClose();
   };
@@ -117,8 +130,23 @@ export function SettingsModal({ visible, settings, onSave, onClose }) {
           <div className="s-section__title">Varsling</div>
           <div className="s-section__card">
             <Row label="Nedtelling" value={countdownSeconds} step={1} min={0} max={15} formatFn={v => `${v}s`} onChange={setCountdownSeconds} />
+            <div className="s-row">
+              <span className="s-row__label">Volum</span>
+              <div className="s-slider">
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="5"
+                  value={beepVolume}
+                  onChange={(e) => handleVolumeChange(e.target.value)}
+                  className="s-slider__input"
+                />
+                <span className="s-slider__value">{beepVolume}%</span>
+              </div>
+            </div>
           </div>
-          <div className="s-section__hint">Pip-lyd de siste sekundene før fasebytte</div>
+          <div className="s-section__hint">Pip-lyd de siste sekundene før fasebytte + halvveis-signal</div>
         </div>
 
         <button className="modal__save-btn" onClick={handleSave}>

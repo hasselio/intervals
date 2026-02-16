@@ -49,6 +49,7 @@ export function useTimer({ onPhaseChange, onTick, onComplete } = {}) {
       countdownSeconds: 5,
       warmupEnabled: false,
       cooldownEnabled: false,
+      beepVolume: 80,
     };
   });
 
