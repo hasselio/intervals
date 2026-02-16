@@ -320,7 +320,7 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
         if (!res.ok) {
           const t = await res.text();
           console.error('[Spotify] Play failed:', res.status, t);
-          if (IS_MOBILE) showToast('Kunne ikke starte avspilling. Åpne Spotify-appen og prøv igjen.');
+          if (IS_MOBILE) showToast('Spill en sang i Spotify-appen først, pause den, og prøv igjen.');
         } else {
           hasStartedRef.current = true;
           // Update track info after a short delay
@@ -331,7 +331,7 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
       if (IS_MOBILE && !deviceId) {
         findDevice().then(devId => {
           if (devId) tryPlay(devId);
-          else showToast('Ingen Spotify-enhet funnet. Åpne Spotify-appen først.');
+          else showToast('Spill en sang i Spotify-appen først, pause den, og prøv igjen.');
         });
       } else {
         tryPlay(deviceId).catch(err => console.error('[Spotify] Play error:', err));
@@ -510,8 +510,8 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
           <div className="spotify-bar__song">{track?.name || (selectedPlaylist ? selectedPlaylist.name : 'Ingen sang spilles')}</div>
           <div className="spotify-bar__artist">
             {track?.artist || (IS_MOBILE && !hasDevice
-              ? 'Åpne Spotify-appen først'
-              : (selectedPlaylist ? 'Klar – trykk PLAY for å starte' : 'Velg en spilleliste'))}
+              ? 'Spill en sang i Spotify-appen, deretter kom tilbake hit'
+              : (selectedPlaylist ? 'Klar – trykk Start for å spille' : 'Velg en spilleliste'))}
           </div>
         </div>
         {track && (
