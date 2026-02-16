@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import './SpotifyBar.css';
 
 const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID || '';
@@ -48,7 +48,10 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
   const [expanded, setExpanded] = useState(false);
   const [playlists, setPlaylists] = useState([]);
   const [showPlaylists, setShowPlaylists] = useState(false);
-  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+  const [selectedPlaylist, setSelectedPlaylist] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('spotify_playlist')); } catch { return null; }
+  });
+  const [toast, setToast] = useState('');
   const [hasDevice, setHasDevice] = useState(!IS_MOBILE);
   const playerRef = useRef(null);
   const progressInterval = useRef(null);
@@ -301,8 +304,6 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
     const wasRunning = prevTimerRunning.current;
     prevTimerRunning.current = timerRunning;
 
-    console.log('[Spotify] Timer effect:', { timerRunning, wasRunning, connected, deviceId: !!deviceId, token: !!token, IS_MOBILE, hasDevice, selectedPlaylist: selectedPlaylist?.name });
-
     if (timerRunning && !wasRunning) {
       const tryPlay = async (devId) => {
         const playBody = (!hasStartedRef.current && selectedPlaylist)
@@ -319,6 +320,7 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
         if (!res.ok) {
           const t = await res.text();
           console.error('[Spotify] Play failed:', res.status, t);
+          if (IS_MOBILE) showToast('Kunne ikke starte avspilling. Åpne Spotify-appen og prøv igjen.');
         } else {
           hasStartedRef.current = true;
           // Update track info after a short delay
@@ -329,7 +331,7 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
       if (IS_MOBILE && !deviceId) {
         findDevice().then(devId => {
           if (devId) tryPlay(devId);
-          else console.warn('[Spotify] No device found. Open Spotify app.');
+          else showToast('Ingen Spotify-enhet funnet. Åpne Spotify-appen først.');
         });
       } else {
         tryPlay(deviceId).catch(err => console.error('[Spotify] Play error:', err));
@@ -391,8 +393,14 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
   }, [token]);
 
   // --- Select a playlist (without playing) ---
+  const showToast = useCallback((msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(''), 4000);
+  }, []);
+
   const selectPlaylist = useCallback(async (playlist) => {
     setSelectedPlaylist(playlist);
+    localStorage.setItem('spotify_playlist', JSON.stringify({ id: playlist.id, name: playlist.name, uri: playlist.uri, images: playlist.images }));
     setTrack(null);
     setProgress(0);
     setDuration(0);
@@ -503,7 +511,7 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
           <div className="spotify-bar__artist">
             {track?.artist || (IS_MOBILE && !hasDevice
               ? 'Åpne Spotify-appen først'
-              : (selectedPlaylist ? 'Klar – trykk Start for å spille' : 'Velg en spilleliste'))}
+              : (selectedPlaylist ? 'Klar – trykk PLAY for å starte' : 'Velg en spilleliste'))}
           </div>
         </div>
         {track && (
@@ -552,6 +560,8 @@ export function SpotifyBar({ timerRunning, isRestPhase }) {
           </button>
         </div>
       )}
+
+      {toast && <div className="spotify-bar__toast">{toast}</div>}
     </div>
   );
 }

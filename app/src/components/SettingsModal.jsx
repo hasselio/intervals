@@ -8,43 +8,74 @@ function fmt(seconds) {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-function Row({ label, value, step, min, max, formatFn, onChange }) {
+function Row({ label, value, step, min, max, formatFn, onChange, disabled }) {
   const display = formatFn ? formatFn(value) : value;
   return (
-    <div className="s-row">
+    <div className={`s-row ${disabled ? 's-row--disabled' : ''}`}>
       <span className="s-row__label">{label}</span>
       <div className="s-row__ctrl">
-        <button className="s-row__btn" onClick={() => onChange(Math.max(min, value - step))}>−</button>
+        <button className="s-row__btn" disabled={disabled} onClick={() => onChange(Math.max(min, value - step))}>−</button>
         <span className="s-row__value">{display}</span>
-        <button className="s-row__btn" onClick={() => onChange(Math.min(max, value + step))}>+</button>
+        <button className="s-row__btn" disabled={disabled} onClick={() => onChange(Math.min(max, value + step))}>+</button>
       </div>
     </div>
   );
 }
 
+function Toggle({ label, checked, onChange }) {
+  return (
+    <div className="s-row">
+      <span className="s-row__label">{label}</span>
+      <button
+        className={`s-toggle ${checked ? 's-toggle--on' : ''}`}
+        onClick={() => onChange(!checked)}
+        role="switch"
+        aria-checked={checked}
+      >
+        <span className="s-toggle__thumb" />
+      </button>
+    </div>
+  );
+}
+
 export function SettingsModal({ visible, settings, onSave, onClose }) {
-  const [warmup, setWarmup] = useState(settings.warmup);
+  const [warmup, setWarmup] = useState(settings.warmup || 180);
   const [work, setWork] = useState(settings.work);
   const [rest, setRest] = useState(settings.rest);
   const [rounds, setRounds] = useState(settings.rounds);
-  const [cooldown, setCooldown] = useState(settings.cooldown);
+  const [cooldown, setCooldown] = useState(settings.cooldown || 180);
   const [countdownSeconds, setCountdownSeconds] = useState(settings.countdownSeconds || 5);
+  const [warmupEnabled, setWarmupEnabled] = useState(settings.warmupEnabled || false);
+  const [cooldownEnabled, setCooldownEnabled] = useState(settings.cooldownEnabled || false);
 
   useEffect(() => {
-    setWarmup(settings.warmup);
+    setWarmup(settings.warmup || 180);
     setWork(settings.work);
     setRest(settings.rest);
     setRounds(settings.rounds);
-    setCooldown(settings.cooldown);
+    setCooldown(settings.cooldown || 180);
     setCountdownSeconds(settings.countdownSeconds || 5);
+    setWarmupEnabled(settings.warmupEnabled || false);
+    setCooldownEnabled(settings.cooldownEnabled || false);
   }, [settings]);
 
   const handleSave = () => {
-    onSave({ warmup, work, rest, rounds, cooldown, countdownSeconds });
+    onSave({
+      warmup: warmupEnabled ? warmup : 0,
+      work,
+      rest,
+      rounds,
+      cooldown: cooldownEnabled ? cooldown : 0,
+      countdownSeconds,
+      warmupEnabled,
+      cooldownEnabled,
+    });
     onClose();
   };
 
-  const totalTime = warmup + (work + rest) * rounds - rest + cooldown;
+  const effectiveWarmup = warmupEnabled ? warmup : 0;
+  const effectiveCooldown = cooldownEnabled ? cooldown : 0;
+  const totalTime = effectiveWarmup + (work + rest) * rounds - rest + effectiveCooldown;
 
   return createPortal(
     <>
@@ -71,8 +102,14 @@ export function SettingsModal({ visible, settings, onSave, onClose }) {
         <div className="s-section">
           <div className="s-section__title">Oppvarming & nedkjøling</div>
           <div className="s-section__card">
-            <Row label="Oppvarming" value={warmup} step={30} min={0} max={600} formatFn={fmt} onChange={setWarmup} />
-            <Row label="Nedkjøling" value={cooldown} step={30} min={0} max={600} formatFn={fmt} onChange={setCooldown} />
+            <Toggle label="Oppvarming" checked={warmupEnabled} onChange={setWarmupEnabled} />
+            {warmupEnabled && (
+              <Row label="Varighet" value={warmup} step={30} min={30} max={600} formatFn={fmt} onChange={setWarmup} />
+            )}
+            <Toggle label="Nedkjøling" checked={cooldownEnabled} onChange={setCooldownEnabled} />
+            {cooldownEnabled && (
+              <Row label="Varighet" value={cooldown} step={30} min={30} max={600} formatFn={fmt} onChange={setCooldown} />
+            )}
           </div>
         </div>
 

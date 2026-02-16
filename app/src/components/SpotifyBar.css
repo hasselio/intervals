@@ -287,3 +287,17 @@
   color: var(--color-text-dim);
   font-size: 13px;
 }
+
+.spotify-bar__toast {
+  padding: 8px 14px;
+  font-size: 12px;
+  color: #fff;
+  background: #e53935;
+  text-align: center;
+  animation: toast-in 0.3s ease;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

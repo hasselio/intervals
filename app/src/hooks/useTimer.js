@@ -35,13 +35,21 @@ function buildPhases(settings) {
 }
 
 export function useTimer({ onPhaseChange, onTick, onComplete } = {}) {
-  const [settings, setSettings] = useState({
-    warmup: 180,
-    work: 30,
-    rest: 15,
-    rounds: 8,
-    cooldown: 180,
-    countdownSeconds: 5,
+  const [settings, setSettings] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('interval_settings'));
+      if (saved) return saved;
+    } catch {}
+    return {
+      warmup: 0,
+      work: 30,
+      rest: 15,
+      rounds: 8,
+      cooldown: 0,
+      countdownSeconds: 5,
+      warmupEnabled: false,
+      cooldownEnabled: false,
+    };
   });
 
   const [status, setStatus] = useState(STATUS_IDLE);
@@ -168,6 +176,7 @@ export function useTimer({ onPhaseChange, onTick, onComplete } = {}) {
   const updateSettings = useCallback((newSettings) => {
     setSettings(prev => {
       const updated = { ...prev, ...newSettings };
+      localStorage.setItem('interval_settings', JSON.stringify(updated));
       return updated;
     });
   }, []);

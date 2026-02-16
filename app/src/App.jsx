@@ -12,6 +12,7 @@ import { SettingsModal } from './components/SettingsModal'
 
 function App() {
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [showComplete, setShowComplete] = useState(false)
   const { playCountdown, playPhaseChange, playComplete, vibrate, getCtx } = useAudioCues()
   const wakeLock = useWakeLock()
 
@@ -30,6 +31,7 @@ function App() {
     playComplete()
     vibrate([300, 100, 300, 100, 300])
     wakeLock.release()
+    setShowComplete(true)
   }, [playComplete, vibrate, wakeLock])
 
   const timer = useTimer({ onPhaseChange, onTick, onComplete })
@@ -124,6 +126,21 @@ function App() {
         onSave={handleSaveSettings}
         onClose={() => setSettingsOpen(false)}
       />
+
+      {showComplete && (
+        <div className="complete-overlay" onClick={() => setShowComplete(false)}>
+          <div className="complete-overlay__card">
+            <div className="complete-overlay__icon">✓</div>
+            <div className="complete-overlay__title">Trening fullført!</div>
+            <div className="complete-overlay__stats">
+              <span>{timer.settings.rounds} runder</span>
+              <span>·</span>
+              <span>{Math.floor(timer.settings.work / 60)}:{(timer.settings.work % 60).toString().padStart(2, '0')} arbeid</span>
+            </div>
+            <div className="complete-overlay__hint">Trykk for å lukke</div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
