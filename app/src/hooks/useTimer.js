@@ -131,7 +131,7 @@ export function useTimer({ onPhaseChange, onTick, onComplete } = {}) {
         onPhaseChangeRef.current?.(allPhases[pi]);
       } else {
         setTimeLeft(tl);
-        onTickRef.current?.(tl, settingsRef.current);
+        onTickRef.current?.(tl, settingsRef.current, allPhases[pi]);
       }
     }, 1000);
   }, [clearTick]);

@@ -37,6 +37,12 @@ export function useAudioCues() {
     setTimeout(() => createBeep(ctx, 1500, 0.3, 0.4), 150);
   }, [getCtx]);
 
+  const playHalfway = useCallback(() => {
+    const ctx = getCtx();
+    createBeep(ctx, 660, 0.12, 0.2);
+    setTimeout(() => createBeep(ctx, 660, 0.12, 0.2), 150);
+  }, [getCtx]);
+
   const playComplete = useCallback(() => {
     const ctx = getCtx();
     createBeep(ctx, 800, 0.2, 0.3);
@@ -58,5 +64,5 @@ export function useAudioCues() {
     };
   }, []);
 
-  return { playCountdown, playPhaseChange, playComplete, vibrate, getCtx };
+  return { playCountdown, playHalfway, playPhaseChange, playComplete, vibrate, getCtx };
 }

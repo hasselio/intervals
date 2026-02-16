@@ -13,7 +13,7 @@ import { SettingsModal } from './components/SettingsModal'
 function App() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [showComplete, setShowComplete] = useState(false)
-  const { playCountdown, playPhaseChange, playComplete, vibrate, getCtx } = useAudioCues()
+  const { playCountdown, playHalfway, playPhaseChange, playComplete, vibrate, getCtx } = useAudioCues()
   const wakeLock = useWakeLock()
 
   const onPhaseChange = useCallback((phase) => {
@@ -21,11 +21,18 @@ function App() {
     vibrate([200, 100, 200])
   }, [playPhaseChange, vibrate])
 
-  const onTick = useCallback((timeLeft, settings) => {
+  const onTick = useCallback((timeLeft, settings, phase) => {
     if (timeLeft <= (settings?.countdownSeconds || 5) && timeLeft > 0) {
       playCountdown()
     }
-  }, [playCountdown])
+    if (phase?.type === 'work' && phase.duration > 1) {
+      const half = Math.floor(phase.duration / 2)
+      if (timeLeft === half) {
+        playHalfway()
+        vibrate([100, 50, 100])
+      }
+    }
+  }, [playCountdown, playHalfway, vibrate])
 
   const onComplete = useCallback(() => {
     playComplete()
