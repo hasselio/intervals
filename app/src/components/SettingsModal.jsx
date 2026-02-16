@@ -48,6 +48,7 @@ export function SettingsModal({ visible, settings, onSave, onClose, onPreviewVol
   const [warmupEnabled, setWarmupEnabled] = useState(settings.warmupEnabled || false);
   const [cooldownEnabled, setCooldownEnabled] = useState(settings.cooldownEnabled || false);
   const [beepVolume, setBeepVolume] = useState(settings.beepVolume ?? 80);
+  const [halfwayBeep, setHalfwayBeep] = useState(settings.halfwayBeep !== false);
   const previewTimeout = useRef(null);
 
   useEffect(() => {
@@ -60,6 +61,7 @@ export function SettingsModal({ visible, settings, onSave, onClose, onPreviewVol
     setWarmupEnabled(settings.warmupEnabled || false);
     setCooldownEnabled(settings.cooldownEnabled || false);
     setBeepVolume(settings.beepVolume ?? 80);
+    setHalfwayBeep(settings.halfwayBeep !== false);
   }, [settings]);
 
   const handleVolumeChange = useCallback((val) => {
@@ -82,6 +84,7 @@ export function SettingsModal({ visible, settings, onSave, onClose, onPreviewVol
       warmupEnabled,
       cooldownEnabled,
       beepVolume,
+      halfwayBeep,
     });
     onClose();
   };
@@ -130,6 +133,7 @@ export function SettingsModal({ visible, settings, onSave, onClose, onPreviewVol
           <div className="s-section__title">Varsling</div>
           <div className="s-section__card">
             <Row label="Nedtelling" value={countdownSeconds} step={1} min={0} max={15} formatFn={v => `${v}s`} onChange={setCountdownSeconds} />
+            <Toggle label="Halvveis-pip" checked={halfwayBeep} onChange={setHalfwayBeep} />
             <div className="s-row">
               <span className="s-row__label">Volum</span>
               <div className="s-slider">

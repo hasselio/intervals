@@ -14,10 +14,31 @@
   transition: background var(--transition-normal);
 }
 
-.progress-steps__step--done {
-  background: var(--color-text);
+/* --- Phase type base colors (upcoming) --- */
+.progress-steps__step--work {
+  background: rgba(76, 175, 80, 0.2);
 }
 
-.progress-steps__step--active {
-  background: var(--color-text-secondary);
+.progress-steps__step--rest {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+/* --- Completed --- */
+.progress-steps__step--work.progress-steps__step--done {
+  background: var(--color-success, #4caf50);
+}
+
+.progress-steps__step--rest.progress-steps__step--done {
+  background: var(--color-rest, #3b82f6);
+}
+
+/* --- Active --- */
+.progress-steps__step--work.progress-steps__step--active {
+  background: var(--color-success, #4caf50);
+  box-shadow: 0 0 6px rgba(76, 175, 80, 0.5);
+}
+
+.progress-steps__step--rest.progress-steps__step--active {
+  background: var(--color-rest, #3b82f6);
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.5);
 }

@@ -28,7 +28,7 @@ function App() {
     if (timeLeft <= (settings?.countdownSeconds || 5) && timeLeft > 0) {
       playCountdown()
     }
-    if (phase?.type === 'work' && phase.duration > 1) {
+    if (settings?.halfwayBeep !== false && phase?.type === 'work' && phase.duration > 1) {
       const half = Math.floor(phase.duration / 2)
       if (timeLeft === half) {
         playHalfway()

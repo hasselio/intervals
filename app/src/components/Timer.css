@@ -24,8 +24,8 @@
 
 .timer__container {
   position: relative;
-  width: min(250px, 55vw);
-  height: min(250px, 55vw);
+  width: min(320px, 70vw);
+  height: min(320px, 70vw);
 }
 
 .timer__svg {
@@ -59,7 +59,7 @@
 
 .timer__value {
   font-family: var(--font-mono);
-  font-size: min(60px, 13vw);
+  font-size: min(76px, 17vw);
   font-weight: 500;
   letter-spacing: -2px;
   line-height: 1;
