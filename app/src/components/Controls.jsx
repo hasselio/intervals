@@ -1,7 +1,7 @@
 import { STATUS_IDLE, STATUS_RUNNING, STATUS_PAUSED } from '../hooks/useTimer';
 import './Controls.css';
 
-export function Controls({ status, onStart, onTogglePause, onStop }) {
+export function Controls({ status, onStart, onTogglePause, onStop, onSkipPhase }) {
   return (
     <div className="controls">
       {status !== STATUS_IDLE ? (
@@ -35,11 +35,13 @@ export function Controls({ status, onStart, onTogglePause, onStop }) {
 
           <button
             className="ctrl-btn ctrl-btn--secondary"
-            disabled
-            aria-label="Placeholder"
-            style={{ opacity: 0 }}
+            onClick={onSkipPhase}
+            aria-label="Neste fase"
           >
-            <svg viewBox="0 0 24 24" />
+            <svg viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="5,4 15,12 5,20" fill="currentColor" stroke="none" />
+              <line x1="19" y1="5" x2="19" y2="19" />
+            </svg>
           </button>
         </>
       ) : (

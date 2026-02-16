@@ -169,6 +169,25 @@ export function useTimer({ onPhaseChange, onTick, onComplete } = {}) {
     else if (status === STATUS_PAUSED) resume();
   }, [status, pause, resume]);
 
+  const skipPhase = useCallback(() => {
+    if (status === STATUS_IDLE) return;
+    const nextIndex = phaseIndex + 1;
+    if (nextIndex >= phases.length) {
+      clearTick();
+      setStatus(STATUS_IDLE);
+      setPhaseIndex(0);
+      setTimeLeft(0);
+      onCompleteRef.current?.();
+      return;
+    }
+    setPhaseIndex(nextIndex);
+    setTimeLeft(phases[nextIndex].duration);
+    onPhaseChangeRef.current?.(phases[nextIndex]);
+    if (status === STATUS_RUNNING) {
+      startTicking(nextIndex, phases[nextIndex].duration, phases);
+    }
+  }, [status, phaseIndex, phases, clearTick, startTicking]);
+
   useEffect(() => {
     return () => clearTick();
   }, [clearTick]);
@@ -199,5 +218,6 @@ export function useTimer({ onPhaseChange, onTick, onComplete } = {}) {
     resume,
     stop,
     togglePause,
+    skipPhase,
   };
 }

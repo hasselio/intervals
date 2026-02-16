@@ -3,7 +3,7 @@ import './Timer.css';
 
 const CIRCUMFERENCE = 2 * Math.PI * 126;
 
-export function Timer({ timeLeft, phaseDuration, totalRemaining = 0, showTotal = false }) {
+export function Timer({ timeLeft, phaseDuration, totalRemaining = 0, showTotal = false, phaseType = null }) {
   const progress = phaseDuration > 0 ? timeLeft / phaseDuration : 0;
   const dashOffset = CIRCUMFERENCE * (1 - progress);
 
@@ -36,7 +36,7 @@ export function Timer({ timeLeft, phaseDuration, totalRemaining = 0, showTotal =
             r="126"
           />
           <circle
-            className="timer__progress"
+            className={`timer__progress ${phaseType ? `timer__progress--${phaseType}` : ''}`}
             cx="135"
             cy="135"
             r="126"

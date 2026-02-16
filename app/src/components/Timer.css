@@ -24,8 +24,8 @@
 
 .timer__container {
   position: relative;
-  width: min(230px, 50vw);
-  height: min(230px, 50vw);
+  width: min(250px, 55vw);
+  height: min(250px, 55vw);
 }
 
 .timer__svg {
@@ -59,7 +59,7 @@
 
 .timer__value {
   font-family: var(--font-mono);
-  font-size: min(56px, 12vw);
+  font-size: min(60px, 13vw);
   font-weight: 500;
   letter-spacing: -2px;
   line-height: 1;
@@ -69,6 +69,23 @@
 .timer__sub {
   font-size: 13px;
   color: var(--color-text-dim);
-  margin-top: 8px;
+  margin-top: 6px;
   font-weight: 500;
+}
+
+/* --- Phase colors --- */
+.timer__progress--work {
+  stroke: var(--color-success, #4caf50);
+}
+
+.timer__progress--rest {
+  stroke: var(--color-rest, #3b82f6);
+}
+
+.timer__progress--warmup {
+  stroke: var(--color-warning, #f59e0b);
+}
+
+.timer__progress--cooldown {
+  stroke: var(--color-warning, #f59e0b);
 }

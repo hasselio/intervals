@@ -58,6 +58,10 @@ function App() {
     timer.togglePause()
   }, [timer])
 
+  const handleSkipPhase = useCallback(() => {
+    timer.skipPhase()
+  }, [timer])
+
   const handleSaveSettings = useCallback((newSettings) => {
     timer.updateSettings(newSettings)
   }, [timer])
@@ -108,6 +112,7 @@ function App() {
           phaseDuration={timer.status === STATUS_IDLE ? timer.settings.work : timer.phaseDuration}
           totalRemaining={timer.status !== STATUS_IDLE ? timer.totalRemaining : 0}
           showTotal={timer.status !== STATUS_IDLE}
+          phaseType={timer.status !== STATUS_IDLE ? timer.currentPhase?.type : null}
         />
 
         <ProgressSteps
@@ -120,6 +125,7 @@ function App() {
           onStart={handleStart}
           onTogglePause={handleTogglePause}
           onStop={handleStop}
+          onSkipPhase={handleSkipPhase}
         />
       </div>
 
