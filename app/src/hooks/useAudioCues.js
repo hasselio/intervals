@@ -28,26 +28,26 @@ export function useAudioCues() {
 
   const playCountdown = useCallback(() => {
     const ctx = getCtx();
-    createBeep(ctx, 880, 0.15, 0.25);
+    createBeep(ctx, 880, 0.2, 0.8);
   }, [getCtx]);
 
   const playPhaseChange = useCallback(() => {
     const ctx = getCtx();
-    createBeep(ctx, 1200, 0.3, 0.4);
-    setTimeout(() => createBeep(ctx, 1500, 0.3, 0.4), 150);
+    createBeep(ctx, 1200, 0.35, 1.0);
+    setTimeout(() => createBeep(ctx, 1500, 0.35, 1.0), 200);
   }, [getCtx]);
 
   const playHalfway = useCallback(() => {
     const ctx = getCtx();
-    createBeep(ctx, 660, 0.12, 0.2);
-    setTimeout(() => createBeep(ctx, 660, 0.12, 0.2), 150);
+    createBeep(ctx, 660, 0.2, 0.8);
+    setTimeout(() => createBeep(ctx, 660, 0.2, 0.8), 200);
   }, [getCtx]);
 
   const playComplete = useCallback(() => {
     const ctx = getCtx();
-    createBeep(ctx, 800, 0.2, 0.3);
-    setTimeout(() => createBeep(ctx, 1000, 0.2, 0.3), 200);
-    setTimeout(() => createBeep(ctx, 1200, 0.4, 0.4), 400);
+    createBeep(ctx, 800, 0.25, 1.0);
+    setTimeout(() => createBeep(ctx, 1000, 0.25, 1.0), 250);
+    setTimeout(() => createBeep(ctx, 1200, 0.5, 1.0), 500);
   }, [getCtx]);
 
   const vibrate = useCallback((pattern = [100, 50, 100]) => {
