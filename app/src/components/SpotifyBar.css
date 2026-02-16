@@ -1,6 +1,6 @@
 /* --- Base bar --- */
 .spotify-bar {
-  margin: 12px 28px 0;
+  margin: 8px 28px 0;
   background: var(--color-surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
@@ -183,12 +183,12 @@
 
 /* --- Playlist panel --- */
 .spotify-panel {
-  margin: 12px 28px 0;
+  margin: 8px 28px 0;
   background: var(--color-surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-spotify);
   overflow: hidden;
-  max-height: 320px;
+  max-height: min(320px, 45vh);
   display: flex;
   flex-direction: column;
 }

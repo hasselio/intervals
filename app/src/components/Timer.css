@@ -3,9 +3,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 8px 20px;
   flex: 1;
-  gap: 8px;
+  min-height: 0;
+  gap: 4px;
 }
 
 .timer__total {
@@ -23,8 +24,8 @@
 
 .timer__container {
   position: relative;
-  width: 270px;
-  height: 270px;
+  width: min(230px, 50vw);
+  height: min(230px, 50vw);
 }
 
 .timer__svg {
@@ -58,7 +59,7 @@
 
 .timer__value {
   font-family: var(--font-mono);
-  font-size: 68px;
+  font-size: min(56px, 12vw);
   font-weight: 500;
   letter-spacing: -2px;
   line-height: 1;

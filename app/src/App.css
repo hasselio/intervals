@@ -1,8 +1,8 @@
 .app-shell {
   width: 100%;
   max-width: 390px;
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -14,7 +14,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 56px 28px 16px;
+  padding: max(env(safe-area-inset-top, 12px), 12px) 28px 8px;
+  flex-shrink: 0;
 }
 
 .app-header__title {
@@ -56,12 +57,14 @@
 
 .app-content {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
 }
 
 .app-footer {
-  padding-bottom: max(env(safe-area-inset-bottom, 0px), 24px);
+  flex-shrink: 0;
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 12px);
 }
 
 /* --- Completion overlay --- */
